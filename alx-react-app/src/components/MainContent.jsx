@@ -2,7 +2,7 @@ import React from 'react'
 
 const MainContent = () => {
   return (
-    <p>I love to visit New York, Paris, and Tokyo.</p>
+    <main>I love to visit New York, Paris, and Tokyo.</main>
   )
 }
 
