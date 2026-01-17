@@ -8,9 +8,9 @@ function App() {
 
   return (
     <>
-      <UserContext>
+      <UserContext.provider value={userData}>
         <ProfilePage />
-      </UserContext>
+      </UserContext.provider>
       
     </>
   );
