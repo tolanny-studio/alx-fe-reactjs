@@ -1,5 +1,5 @@
 import "./App.css";
-import UserContext from "./components/context/UserContext";
+import UserContext from "./components/UserContext";
 
 import ProfilePage from "./components/ProfilePage";
 
