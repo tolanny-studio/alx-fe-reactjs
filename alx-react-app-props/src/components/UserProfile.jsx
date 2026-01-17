@@ -1,8 +1,11 @@
-import React from 'react'
+import React,{useContext} from 'react'
+import UserContext from './UserContext';
 
-const UserProfile = ({props}) => {
+
+const UserProfile = ({userData}) => {
   console.log(props);
   
+  const user = useContext(Context)
   
   return (
     <div style={{ border: '1px solid gray', padding: '10px', margin: '10px' }}>
