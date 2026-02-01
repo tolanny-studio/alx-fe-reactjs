@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { fetchUserData, searchUsersAdvanced } from "../services/githubService";
-import UserCard from "./UserCard";
 
 export default function Search() {
   const [username, setUsername] = useState("");
@@ -17,6 +16,7 @@ export default function Search() {
     setLoading(true);
     setError("");
     setUsers([]);
+
     try {
       const data = await fetchUserData(username);
       setSingleUser(data);
@@ -97,11 +97,49 @@ export default function Search() {
       {loading && <p className="text-center">Loading...</p>}
       {error && <p className="text-red-500 text-center">{error}</p>}
 
-      {singleUser && <UserCard user={singleUser} />}
+      {/* Single User Result */}
+      {singleUser && (
+        <div className="border rounded p-4 shadow text-center">
+          <img
+            src={singleUser.avatar_url}
+            alt={singleUser.login}
+            className="w-24 h-24 rounded-full mx-auto"
+          />
+          <h2 className="text-xl font-semibold mt-2">{singleUser.login}</h2>
 
-      <div className="grid md:grid-cols-2 gap-4">
+          {/* html_url USED HERE */}
+          <a
+            href={singleUser.html_url}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-600 block mt-2"
+          >
+            View GitHub Profile
+          </a>
+        </div>
+      )}
+
+      {/* Advanced Search Results */}
+      <div className="grid md:grid-cols-2 gap-4 mt-6">
         {users.map((user) => (
-          <UserCard key={user.id} user={user} />
+          <div key={user.id} className="border rounded p-4 shadow text-center">
+            <img
+              src={user.avatar_url}
+              alt={user.login}
+              className="w-20 h-20 rounded-full mx-auto"
+            />
+            <h2 className="text-lg font-semibold mt-2">{user.login}</h2>
+
+            {/* html_url USED HERE TOO */}
+            <a
+              href={user.html_url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-blue-600 block mt-2"
+            >
+              View GitHub Profile
+            </a>
+          </div>
         ))}
       </div>
 
