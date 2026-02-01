@@ -1,37 +1,120 @@
-import axios from "axios";
+import { useState } from "react";
+import { fetchUserData, searchUsersAdvanced } from "../services/githubService";
+import UserCard from "./UserCard";
 
-const TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
+export default function Search() {
+  const [username, setUsername] = useState("");
+  const [location, setLocation] = useState("");
+  const [minRepos, setMinRepos] = useState("");
+  const [users, setUsers] = useState([]);
+  const [singleUser, setSingleUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
 
-// Basic user fetch
-export const fetchUserData = async (username) => {
-  const { data } = await axios.get(`https://api.github.com/users/${username}`, {
-    headers: {
-      Authorization: `token ${TOKEN}`,
-    },
-  });
-  return data;
-};
-
-// Advanced search (UPDATED URL STYLE)
-export const searchUsersAdvanced = async ({
-  username,
-  location,
-  minRepos,
-  page = 1,
-}) => {
-  let query = `${username}+in:login`;
-
-  if (location) query += `+location:${location}`;
-  if (minRepos) query += `+repos:>=${minRepos}`;
-
-  const { data } = await axios.get(
-    `https://api.github.com/search/users?q=${query}&page=${page}`,
-    {
-      headers: {
-        Authorization: `token ${TOKEN}`,
-      },
+  const handleBasicSearch = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setUsers([]);
+    try {
+      const data = await fetchUserData(username);
+      setSingleUser(data);
+    } catch {
+      setError("Looks like we cant find the user");
+      setSingleUser(null);
+    } finally {
+      setLoading(false);
     }
-  );
+  };
 
-  return data;
-};
+  const handleAdvancedSearch = async (e, loadMore = false) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSingleUser(null);
+
+    try {
+      const nextPage = loadMore ? page + 1 : 1;
+      const data = await searchUsersAdvanced({
+        username,
+        location,
+        minRepos,
+        page: nextPage,
+      });
+
+      setUsers(loadMore ? [...users, ...data.items] : data.items);
+      setPage(nextPage);
+    } catch {
+      setError("Error fetching advanced search results");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6 text-center">GitHub User Search</h1>
+
+      {/* Basic Search */}
+      <form onSubmit={handleBasicSearch} className="flex gap-2 mb-4">
+        <input
+          type="text"
+          placeholder="Search username..."
+          className="flex-1 p-2 border rounded"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <button className="bg-blue-600 text-white px-4 py-2 rounded">
+          Search
+        </button>
+      </form>
+
+      {/* Advanced Search */}
+      <form
+        onSubmit={handleAdvancedSearch}
+        className="grid md:grid-cols-3 gap-2 mb-6"
+      >
+        <input
+          type="text"
+          placeholder="Location"
+          className="p-2 border rounded"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="Min repos"
+          className="p-2 border rounded"
+          value={minRepos}
+          onChange={(e) => setMinRepos(e.target.value)}
+        />
+        <button className="bg-green-600 text-white px-4 py-2 rounded">
+          Advanced Search
+        </button>
+      </form>
+
+      {loading && <p className="text-center">Loading...</p>}
+      {error && <p className="text-red-500 text-center">{error}</p>}
+
+      {singleUser && <UserCard user={singleUser} />}
+
+      <div className="grid md:grid-cols-2 gap-4">
+        {users.map((user) => (
+          <UserCard key={user.id} user={user} />
+        ))}
+      </div>
+
+      {users.length > 0 && (
+        <div className="text-center mt-6">
+          <button
+            onClick={(e) => handleAdvancedSearch(e, true)}
+            className="bg-purple-600 text-white px-6 py-2 rounded"
+          >
+            Load More
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
