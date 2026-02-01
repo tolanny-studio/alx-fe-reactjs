@@ -9,7 +9,7 @@ const API = axios.create({
 
 // Basic user fetch
 export const fetchUserData = async (username) => {
-  const { data } = await API.get(`/users/${username}`);
+  const { data } = await axios.get(`https://api.github.com/search/users?q=${query}&page=${page}`);
   return data;
 };
 
