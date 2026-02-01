@@ -1,55 +1,94 @@
 import { useState } from "react";
-import { fetchUserData } from "../services/githubService";
+import { fetchUserData, searchUsersAdvanced } from "../services/githubService";
+import UserCard from "./UserCard";
 
 export default function Search() {
   const [username, setUsername] = useState("");
-  const [user, setUser] = useState(null);
+  const [location, setLocation] = useState("");
+  const [minRepos, setMinRepos] = useState("");
+  const [users, setUsers] = useState([]);
+  const [singleUser, setSingleUser] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSearch = async (e) => {
+  const handleBasicSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(false);
-    setUser(null);
-
+    setError("");
+    setUsers([]);
     try {
       const data = await fetchUserData(username);
-      setUser(data);
+      setSingleUser(data);
     } catch {
-      setError(true);
+      setError("Looks like we cant find the user");
+      setSingleUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAdvancedSearch = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSingleUser(null);
+    try {
+      const data = await searchUsersAdvanced({ username, location, minRepos });
+      setUsers(data.items);
+    } catch {
+      setError("Error fetching advanced search results");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 max-w-md mx-auto">
-      <form onSubmit={handleSearch} className="flex gap-2">
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6 text-center">GitHub User Search</h1>
+
+      {/* Basic Search */}
+      <form onSubmit={handleBasicSearch} className="flex gap-2 mb-4">
         <input
           type="text"
-          placeholder="Enter GitHub username"
-          className="border p-2 flex-1 rounded"
+          placeholder="Search username..."
+          className="flex-1 p-2 border rounded"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <button className="bg-blue-500 text-white px-4 rounded">
-          Search
+        <button className="bg-blue-600 text-white px-4 py-2 rounded">Search</button>
+      </form>
+
+      {/* Advanced Search */}
+      <form onSubmit={handleAdvancedSearch} className="grid md:grid-cols-3 gap-2 mb-6">
+        <input
+          type="text"
+          placeholder="Location"
+          className="p-2 border rounded"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="Min repos"
+          className="p-2 border rounded"
+          value={minRepos}
+          onChange={(e) => setMinRepos(e.target.value)}
+        />
+        <button className="bg-green-600 text-white px-4 py-2 rounded">
+          Advanced Search
         </button>
       </form>
 
-      {loading && <p className="mt-4">Loading...</p>}
-      {error && <p className="mt-4 text-red-500">Looks like we cant find the user</p>}
+      {loading && <p className="text-center">Loading...</p>}
+      {error && <p className="text-red-500 text-center">{error}</p>}
 
-      {user && (
-        <div className="mt-6 p-4 border rounded text-center">
-          <img src={user.avatar_url} alt="avatar" className="w-24 mx-auto rounded-full" />
-          <h2 className="text-xl font-bold mt-2">{user.name || user.login}</h2>
-          <a href={user.html_url} target="_blank" className="text-blue-600">
-            View Profile
-          </a>
-        </div>
-      )}
+      {singleUser && <UserCard user={singleUser} />}
+
+      <div className="grid md:grid-cols-2 gap-4">
+        {users.map((user) => (
+          <UserCard key={user.id} user={user} />
+        ))}
+      </div>
     </div>
   );
 }
