@@ -6,19 +6,18 @@ function RecipeDetail() {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
 
-  // ✅ Load recipe when component mounts
   useEffect(() => {
     const foundRecipe = recipesData.find(
       (item) => item.id === Number(id)
     );
-
     setRecipe(foundRecipe);
   }, [id]);
 
   if (!recipe) return <p className="text-center mt-10">Recipe not found</p>;
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    // ✅ Added shadow-lg here
+    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <img
         src={recipe.image}
         alt={recipe.title}
@@ -30,7 +29,7 @@ function RecipeDetail() {
       </h1>
 
       {/* Ingredients */}
-      <div className="bg-gray-100 p-4 rounded-lg mt-6">
+      <div className="bg-gray-100 p-4 rounded-lg mt-6 shadow">
         <h2 className="text-xl font-semibold">Ingredients</h2>
         <ul className="list-disc ml-6 mt-2">
           {recipe.ingredients.map((item, index) => (
@@ -40,7 +39,7 @@ function RecipeDetail() {
       </div>
 
       {/* Instructions */}
-      <div className="bg-gray-100 p-4 rounded-lg mt-6">
+      <div className="bg-gray-100 p-4 rounded-lg mt-6 shadow">
         <h2 className="text-xl font-semibold">Instructions</h2>
         <p className="mt-2">{recipe.instructions}</p>
       </div>
