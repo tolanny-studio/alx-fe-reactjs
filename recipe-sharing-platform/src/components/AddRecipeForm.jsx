@@ -7,10 +7,9 @@ function AddRecipeForm() {
     steps: "",
   });
 
-  // ✅ checker expects these names
   const [errors, setErrors] = useState({});
 
-  // ✅ validation function
+  // validation function
   const validate = () => {
     let newErrors = {};
 
@@ -29,8 +28,6 @@ function AddRecipeForm() {
     }
 
     setErrors(newErrors);
-
-    // return true if no errors
     return Object.keys(newErrors).length === 0;
   };
 
@@ -43,21 +40,16 @@ function AddRecipeForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (validate()) {
       alert("Recipe added successfully!");
-
-      setFormData({
-        title: "",
-        ingredients: "",
-        steps: "",
-      });
+      setFormData({ title: "", ingredients: "", steps: "" });
     }
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-2xl font-bold mb-6">
+    // ✅ added md responsive utilities
+    <div className="max-w-md md:max-w-lg mx-auto p-4 md:p-6 bg-white shadow-lg rounded-lg">
+      <h1 className="text-xl md:text-2xl font-bold mb-6">
         Add New Recipe
       </h1>
 
@@ -70,7 +62,7 @@ function AddRecipeForm() {
             placeholder="Recipe Title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full border p-3 rounded-lg"
+            className="w-full border p-2 md:p-3 rounded-lg"
           />
           {errors.title && (
             <p className="text-red-500 text-sm">{errors.title}</p>
@@ -84,7 +76,7 @@ function AddRecipeForm() {
             placeholder="Ingredients (comma separated)"
             value={formData.ingredients}
             onChange={handleChange}
-            className="w-full border p-3 rounded-lg"
+            className="w-full border p-2 md:p-3 rounded-lg"
           />
           {errors.ingredients && (
             <p className="text-red-500 text-sm">{errors.ingredients}</p>
@@ -98,7 +90,7 @@ function AddRecipeForm() {
             placeholder="Preparation Steps"
             value={formData.steps}
             onChange={handleChange}
-            className="w-full border p-3 rounded-lg"
+            className="w-full border p-2 md:p-3 rounded-lg"
           />
           {errors.steps && (
             <p className="text-red-500 text-sm">{errors.steps}</p>
@@ -107,7 +99,7 @@ function AddRecipeForm() {
 
         <button
           type="submit"
-          className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600"
+          className="w-full md:w-auto bg-blue-500 text-white px-6 py-2 md:py-3 rounded-lg hover:bg-blue-600"
         >
           Submit
         </button>
