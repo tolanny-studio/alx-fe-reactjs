@@ -1,34 +1,25 @@
 import { useState } from "react";
 
 const RegistrationForm = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
+  // separate states (ALX requirement)
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const [errors, setErrors] = useState({});
 
-  // handle input change
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  // basic validation
+  // validation
   const validate = () => {
     let newErrors = {};
 
-    if (!formData.username) newErrors.username = "Username is required";
-    if (!formData.email) newErrors.email = "Email is required";
-    if (!formData.password) newErrors.password = "Password is required";
+    if (!username) newErrors.username = "Username is required";
+    if (!email) newErrors.email = "Email is required";
+    if (!password) newErrors.password = "Password is required";
 
     return newErrors;
   };
 
-  // submit handler
+  // submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -41,22 +32,27 @@ const RegistrationForm = () => {
 
     setErrors({});
 
-    // simulate API call
+    // mock API call
     try {
       const res = await fetch("https://jsonplaceholder.typicode.com/users", {
         method: "POST",
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ username, email, password }),
         headers: {
           "Content-Type": "application/json",
         },
       });
 
       const data = await res.json();
-      console.log("User registered:", data);
+      console.log("Registered:", data);
 
       alert("Registration successful!");
-    } catch (error) {
-      console.error(error);
+
+      // reset form
+      setUsername("");
+      setEmail("");
+      setPassword("");
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -66,28 +62,25 @@ const RegistrationForm = () => {
 
       <input
         type="text"
-        name="username"
         placeholder="Username"
-        value={formData.username}
-        onChange={handleChange}
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
       />
       {errors.username && <p>{errors.username}</p>}
 
       <input
         type="email"
-        name="email"
         placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
       />
       {errors.email && <p>{errors.email}</p>}
 
       <input
         type="password"
-        name="password"
         placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
       />
       {errors.password && <p>{errors.password}</p>}
 
