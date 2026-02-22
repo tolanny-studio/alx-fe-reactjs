@@ -15,25 +15,26 @@ const PostsComponent = () => {
   const {
     data,
     isLoading,
-    isError,   // ✅ ALX expects this
+    isError,
     error,
     refetch,
     isFetching,
   } = useQuery("posts", fetchPosts, {
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 5, // data considered fresh for 5 mins
+    cacheTime: 1000 * 60 * 10, // cache stays 10 mins after component unmounts ✅ required
+    refetchOnWindowFocus: false, // prevents auto refetch on tab focus ✅ required
+    keepPreviousData: true, // keeps old data while fetching new data ✅ required
   });
 
-  // loading state
   if (isLoading) return <p>Loading posts...</p>;
 
-  // error state (ALX expected)
   if (isError) return <p>Error: {error.message}</p>;
 
   return (
     <div>
       <h2>Posts (React Query)</h2>
 
-      {/* refetch button */}
+      {/* manual refetch */}
       <button onClick={refetch}>
         {isFetching ? "Refreshing..." : "Refetch Posts"}
       </button>
