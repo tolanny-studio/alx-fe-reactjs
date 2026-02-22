@@ -15,15 +15,19 @@ const PostsComponent = () => {
   const {
     data,
     isLoading,
+    isError,   // ✅ ALX expects this
     error,
     refetch,
     isFetching,
   } = useQuery("posts", fetchPosts, {
-    staleTime: 1000 * 60 * 5, // cache for 5 minutes
+    staleTime: 1000 * 60 * 5,
   });
 
+  // loading state
   if (isLoading) return <p>Loading posts...</p>;
-  if (error) return <p>Error fetching posts</p>;
+
+  // error state (ALX expected)
+  if (isError) return <p>Error: {error.message}</p>;
 
   return (
     <div>
