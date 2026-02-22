@@ -1,7 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-// validation schem
+// validation schema
 const validationSchema = Yup.object({
   username: Yup.string().required("Username is required"),
   email: Yup.string()
@@ -10,7 +10,7 @@ const validationSchema = Yup.object({
   password: Yup.string().required("Password is required"),
 });
 
-const FormikForm = () => {
+const formikForm = () => {
   const handleSubmit = async (values, { resetForm }) => {
     try {
       const res = await fetch("https://jsonplaceholder.typicode.com/users", {
@@ -67,4 +67,4 @@ const FormikForm = () => {
   );
 };
 
-export default FormikForm;
+export default formikForm;
