@@ -1,4 +1,4 @@
-import formikForm from "./components/FormikForm";
+
 import RegistrationForm from "./components/RegistrationForm";
 
 
